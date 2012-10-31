@@ -1,0 +1,16 @@
+Build.PL
+LICENSE
+MANIFEST
+META.yml
+Makefile.PL
+README
+dist.ini
+lib/Parse/Matroska.pm
+lib/Parse/Matroska/Definitions.pm
+lib/Parse/Matroska/Element.pm
+lib/Parse/Matroska/Reader.pm
+lib/Parse/Matroska/Utils.pm
+t/reader.t
+t/release-pod-coverage.t
+t/release-pod-syntax.t
+t/vectors/dist.ini.mkv
