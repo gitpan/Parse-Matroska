@@ -2,19 +2,11 @@ use 5.008;
 use strict;
 use warnings;
 
+# ABSTRACT: internal EBML grammar definitions
 package Parse::Matroska::Definitions;
 {
-  $Parse::Matroska::Definitions::VERSION = '0.001';
+  $Parse::Matroska::Definitions::VERSION = '0.001001';
 }
-=head1 NAME
-
-Parse::Matroska::Definitions
-
-=head1 VERSION
-
-version 0.001
-
-=cut
 
 use Parse::Matroska::Utils qw{uniq uncamelize};
 
@@ -22,75 +14,14 @@ use Exporter;
 our @ISA       = qw{Exporter};
 our @EXPORT_OK = qw{elem_by_hexid %EBML_DEFINITION %MATROSKA_DEFINITION};
 
-=head1 SYNOPSIS
-
-    use Parse::Matroska::Definitions qw{elem_by_hexid};
-    my $ebml_id = elem_by_hexid('1a45dfa3');
-    print "EBML ID $ebml_id->{elid}'s name: $ebml_id->{name}";
-
-=head1 DESCRIPTION
-
-Contains the definition of the EBML grammar as expected in
-Matroska files. This module is meant mostly for internal use.
-
-As this was extended from a script in mpv-player, some data
-generated is apparently useless for regular module users
-but is still relevant to the mpv-player script. Such data
-is annotated as being for mpv compatibility.
-
-=head1 NOTE
-
-The API of this module is not yet considered stable.
-
-=head1 GLOBALS
-
-These global variables are considered B<immutable>.
-
-=over
-
-=item @Parse::Matroska::Definitions::global_elem_list
-
-A global list of known matroska elements. Useful for
-mpv's matroska script, used for generating C headers
-that parse matroska.
-
-=item %Parse::Matroska::Definitions::global_elem_dict
-
-A global hash of known matroska elements. Used internally
-by L</elem_by_hexid>.
-
-=cut
 
 @Parse::Matroska::Definitions::global_elem_list = ();
 %Parse::Matroska::Definitions::global_elem_dict = ();
 
-=item %EBML_DEFINITION
-
-Optionally-importable hash of known EBML IDs belonging
-to the EBML generic grammar.
-
-=item %MATROSKA_DEFINITION
-
-Optionally-importable hash of known EBML IDs belonging
-to the Matroska-specific grammar.
-
-=cut
 
 our %EBML_DEFINITION = define_ebml();
 our %MATROSKA_DEFINITION = define_matroska();
 
-=back
-
-=head1 METHODS
-
-=over
-
-=item elem_by_hexid(id)
-
-Returns an EBML Element Definition corresponding to the provided
-hexadecimal string. Returns C<undef> if the element is unknown.
-
-=cut
 sub elem_by_hexid {
     my ($elid) = @_;
     return $Parse::Matroska::Definitions::global_elem_dict{$elid};
@@ -113,76 +44,6 @@ use constant TYPE_MAP => {
 # this will be localized to "MATROSKA" or "EBML" on the elem declarations
 our $ELEM_DEFINE_TYPE = undef;
 
-=item elem(name,elid,valtype)
-
-NOTE: never call this function yourself; it changes data structures
-that are considered immutable outside of this package.
-
-Internal API function that generates the EBML Element Definitions.
-
-This API function returns an array which first element is C<elid>
-and the second is a generated hash. The generated hash is stored
-in the @global_elem_list and %global_elem_dict.
-
-The generated hash contains:
-
-=over
-
-=item name
-
-The EBML Element's name, given through C<name>.
-
-=item elid
-
-The EBML Element's hex id, given through C<elid>. Used for lookups by L</elem_by_hexid>.
-
-=item valtype
-
-The EBML Element's type, given through C<valtype>, except when C<valtype> is an arrayref.
-
-=item multiple
-
-If C<name> ends with a '*', is set as true and strips the '*' from L</name>. Used to mark
-elements that may be repeated.
-
-=item subelements
-
-An arrayref of elements that may be children of this element, given through C<valtype>
-if it is an arrayref. Sets L</type> to 'sub' if there are subelements.
-
-=item subids
-
-An arrayref listing all the L</elid>s of subelements, C<uniq>ified.
-
-=back
-
-The following elements are for mpv compatibility:
-
-=over
-
-=item definename
-
-Name used for generating C #defines.
-
-=item fieldname
-
-Name used for generating C struct fields.
-
-=item structname
-
-Name used for generating C struct names.
-
-=item ebmltype
-
-A pre-#defined constant to describe the element's type, set from C<valtype>.
-
-=item valname
-
-Typename used when declaring a struct field referring to this element.
-
-=back
-
-=cut
 sub elem {
     my %e = (name => shift, elid => shift, valtype => shift);
 
@@ -215,13 +76,6 @@ sub elem {
 ### EBML and Matroska document definitons ###
 #############################################
 
-=item define_ebml
-
-Internal function that defines the EBML generic grammar.
-
-Must not be called from outside the package.
-
-=cut
 sub define_ebml {
     local $ELEM_DEFINE_TYPE = 'EBML';
     return (
@@ -241,13 +95,6 @@ sub define_ebml {
 }
 
 
-=item define_matroska
-
-Internal function that defines the Matroska-specific EBML grammar.
-
-Must not be called from outside the package.
-
-=cut
 sub define_matroska {
     local $ELEM_DEFINE_TYPE = 'MATROSKA';
     return (
@@ -394,16 +241,161 @@ sub define_matroska {
 
 1;
 
+__END__
+
+=pod
+
+=head1 NAME
+
+Parse::Matroska::Definitions - internal EBML grammar definitions
+
+=head1 VERSION
+
+version 0.001001
+
+=head1 SYNOPSIS
+
+    use Parse::Matroska::Definitions qw{elem_by_hexid};
+    my $ebml_id = elem_by_hexid('1a45dfa3');
+    print "EBML ID $ebml_id->{elid}'s name: $ebml_id->{name}";
+
+=head1 DESCRIPTION
+
+Contains the definition of the EBML grammar as expected in
+Matroska files. This module is meant mostly for internal use.
+
+As this was extended from a script in mpv-player, some data
+generated is apparently useless for regular module users
+but is still relevant to the mpv-player script. Such data
+is annotated as being for mpv compatibility.
+
+=head1 METHODS
+
+=head2 elem_by_hexid($id)
+
+Returns an EBML Element Definition corresponding to the provided
+hexadecimal string. Returns C<undef> if the element is unknown.
+
+=head2 elem($name,$elid,$valtype)
+
+NOTE: never call this function yourself; it changes data structures
+that are considered immutable outside of this package.
+
+Internal API function that generates the EBML Element Definitions.
+
+This API function returns an array which first element is C<$elid>
+and the second is a generated hash. The generated hash is stored
+in the @global_elem_list and %global_elem_dict.
+
+The generated hash contains:
+
+=over 4
+
+=item name
+
+The EBML Element's name, given through C<$name>.
+
+=item elid
+
+The EBML Element's hex id, given through C<$elid>. Used for lookups by L</elem_by_hexid($id)>.
+
+=item valtype
+
+The EBML Element's type, given through C<$valtype>, except when C<$valtype> is an arrayref.
+
+=item multiple
+
+If C<$name> ends with a C<*>, this is set as true and strips the C<*> from L</name>. Used to
+mark elements that may be repeated.
+
+=item subelements
+
+An arrayref of elements that may be children of this element, given through C<$valtype> if it
+is an arrayref. Sets L</valtype> to C<sub> if there are subelements.
+
+=item subids
+
+An arrayref listing all the L</elid>s of subelements, C<uniq>ified.
+
 =back
+
+The following elements are for mpv compatibility:
+
+=over 4
+
+=item definename
+
+Name used for generating C #defines.
+
+=item fieldname
+
+Name used for generating C struct fields.
+
+=item structname
+
+Name used for generating C struct names.
+
+=item ebmltype
+
+A pre-#defined constant to describe the element's type.
+
+=item valname
+
+Typename used when declaring a struct field referring to this element.
+
+=back
+
+=head2 define_ebml
+
+Internal function that defines the EBML generic grammar.
+
+Must not be called from outside the package.
+
+=head2 define_matroska
+
+Internal function that defines the Matroska-specific EBML grammar.
+
+Must not be called from outside the package.
+
+=head1 NOTE
+
+The API of this module is not yet considered stable.
+
+=head1 GLOBALS
+
+These global variables are considered B<immutable>.
+
+=head2 @Parse::Matroska::Definitions::global_elem_list
+
+A global list of known matroska elements. Useful for
+mpv's matroska script, used for generating C headers
+that parse matroska.
+
+=head2 %Parse::Matroska::Definitions::global_elem_dict
+
+A global hash of known matroska elements. Used internally
+by L</elem_by_hexid($id)>.
+
+=head2 %EBML_DEFINITION
+
+Optionally-importable hash of known EBML IDs belonging
+to the EBML generic grammar.
+
+=head2 %MATROSKA_DEFINITION
+
+Optionally-importable hash of known EBML IDs belonging
+to the Matroska-specific grammar.
 
 =head1 AUTHOR
 
-Diogo Franco <diogomfranco@gmail.com>, aka Kovensky.
+Kovensky <diogomfranco@gmail.com>
 
-=head1 SEE ALSO
+=head1 COPYRIGHT AND LICENSE
 
-L<Parse::Matroska::Reader>, L<Parse::Matroska::Element>.
+This software is Copyright (c) 2012 by Diogo Franco.
 
-=head1 LICENSE
+This is free software, licensed under:
 
-The FreeBSD license, equivalent to the ISC license.
+  The (two-clause) FreeBSD License
+
+=cut

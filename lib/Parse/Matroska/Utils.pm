@@ -1,49 +1,21 @@
 use strict;
 use warnings;
 
+# ABSTRACT: internally-used helper functions
 package Parse::Matroska::Utils;
 {
-  $Parse::Matroska::Utils::VERSION = '0.001';
+  $Parse::Matroska::Utils::VERSION = '0.001001';
 }
-=head1 NAME
-
-Parse::Matroska::Utils
-
-=head1 VERSION
-
-version 0.001
-
-=head1 DESCRIPTION
-
-Internally-used helper functions
-
-=cut
 
 use Exporter;
 our @ISA       = qw{Exporter};
 our @EXPORT_OK = qw{uniq uncamelize};
 
-=head1 FUNCTIONS
-
-=over
-
-=item uniq(@array)
-
-The same as L<List::MoreUtils/"uniq LIST">.
-Included to avoid depending on it.
-
-=cut
 sub uniq(@) {
   my %seen;
   return grep { !$seen{$_}++ } @_;
 }
 
-=item uncamelize($string)
-
-Converts a "StringLikeTHIS" into a
-"string_like_this".
-
-=cut
 sub uncamelize($) {
     local $_ = shift;
     # lc followed by UC: lc_UC
@@ -54,12 +26,41 @@ sub uncamelize($) {
     s/^_//; lc
 }
 
-=back
+__END__
+
+=pod
+
+=head1 NAME
+
+Parse::Matroska::Utils - internally-used helper functions
+
+=head1 VERSION
+
+version 0.001001
+
+=head1 METHODS
+
+=head2 uniq(@array)
+
+The same as L<List::MoreUtils/"uniq LIST">.
+Included to avoid depending on it since it's
+not a core module.
+
+=head2 uncamelize($string)
+
+Converts a "StringLikeTHIS" into a
+"string_like_this".
 
 =head1 AUTHOR
 
-Diogo Franco <diogomfranco@gmail.com>, aka Kovensky.
+Kovensky <diogomfranco@gmail.com>
 
-=head1 LICENSE
+=head1 COPYRIGHT AND LICENSE
 
-The FreeBSD license, equivalent to the ISC license.
+This software is Copyright (c) 2012 by Diogo Franco.
+
+This is free software, licensed under:
+
+  The (two-clause) FreeBSD License
+
+=cut

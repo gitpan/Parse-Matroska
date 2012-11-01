@@ -1,4 +1,5 @@
 Build.PL
+Changes
 LICENSE
 MANIFEST
 META.yml
@@ -14,3 +15,4 @@ t/reader.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
 t/vectors/dist.ini.mkv
+weaver.ini
