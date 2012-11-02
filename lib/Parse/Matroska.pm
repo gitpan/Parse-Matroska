@@ -5,7 +5,7 @@ use warnings;
 # ABSTRACT: Module collection to parse Matroska files.
 package Parse::Matroska;
 {
-  $Parse::Matroska::VERSION = '0.001001';
+  $Parse::Matroska::VERSION = '0.002';
 }
 
 
@@ -23,7 +23,7 @@ Parse::Matroska - Module collection to parse Matroska files.
 
 =head1 VERSION
 
-version 0.001001
+version 0.002
 
 =head1 DESCRIPTION
 
@@ -33,6 +33,10 @@ in how to use this module.
 
 It's intended for this module to contain high-level interfaces
 to the other modules in the distribution.
+
+=head1 SOURCE CODE
+
+L<https://github.com/Kovensky/Parse-Matroska>
 
 =head1 SEE ALSO
 

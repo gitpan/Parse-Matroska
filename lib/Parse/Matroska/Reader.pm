@@ -5,7 +5,7 @@ use warnings;
 # ABSTRACT: a low-level reader for EBML files
 package Parse::Matroska::Reader;
 {
-  $Parse::Matroska::Reader::VERSION = '0.001001';
+  $Parse::Matroska::Reader::VERSION = '0.002';
 }
 
 use Parse::Matroska::Definitions qw{elem_by_hexid};
@@ -256,7 +256,7 @@ Parse::Matroska::Reader - a low-level reader for EBML files
 
 =head1 VERSION
 
-version 0.001001
+version 0.002
 
 =head1 SYNOPSIS
 

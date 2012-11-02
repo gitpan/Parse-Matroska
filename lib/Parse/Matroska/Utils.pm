@@ -4,7 +4,7 @@ use warnings;
 # ABSTRACT: internally-used helper functions
 package Parse::Matroska::Utils;
 {
-  $Parse::Matroska::Utils::VERSION = '0.001001';
+  $Parse::Matroska::Utils::VERSION = '0.002';
 }
 
 use Exporter;
@@ -36,7 +36,7 @@ Parse::Matroska::Utils - internally-used helper functions
 
 =head1 VERSION
 
-version 0.001001
+version 0.002
 
 =head1 METHODS
 

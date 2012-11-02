@@ -22,7 +22,7 @@ my %module_build_args = (
     "Kovensky <diogomfranco\@gmail.com>"
   ],
   "dist_name" => "Parse-Matroska",
-  "dist_version" => "0.001001",
+  "dist_version" => "0.002",
   "license" => "open_source",
   "module_name" => "Parse::Matroska",
   "recommends" => {},

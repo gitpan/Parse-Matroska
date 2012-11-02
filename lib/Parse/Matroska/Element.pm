@@ -5,7 +5,7 @@ use warnings;
 # ABSTRACT: a mid-level representation of an EBML element
 package Parse::Matroska::Element;
 {
-  $Parse::Matroska::Element::VERSION = '0.001001';
+  $Parse::Matroska::Element::VERSION = '0.002';
 }
 
 use Carp;
@@ -123,10 +123,12 @@ sub all_children {
 
 sub children_by_name {
     my ($self, $name) = @_;
-    my $ret = [grep { $_->{name} eq $name } @{$self->{value}}];
-    return unless @$ret;
-    return $ret->[0] if @$ret == 1;
-    return $ret;
+    return unless defined wantarray; # don't do work if work isn't wanted
+    croak "Element can't have children" unless $self->{type} eq 'sub';
+
+    my @found = grep { $_->{name} eq $name } @{$self->{value}};
+    return @found       if wantarray;         # list
+    return shift @found if defined wantarray; # scalar
 }
 
 sub populate_children {
@@ -139,14 +141,14 @@ sub populate_children {
         foreach (@{$self->{value}}) {
             $_->populate_children($recurse, $read_bin);
         }
-        return @{$self->{value}};
+        return $self;
     }
 
     while (my $chld = $self->next_child($read_bin)) {
         $chld->populate_children($recurse, $read_bin) if $recurse;
     }
 
-    return @{$self->{value}};
+    return $self;
 }
 
 1;
@@ -161,7 +163,7 @@ Parse::Matroska::Element - a mid-level representation of an EBML element
 
 =head1 VERSION
 
-version 0.001001
+version 0.002
 
 =head1 SYNOPSIS
 
@@ -307,16 +309,19 @@ to false.
 =head2 children_by_name($name)
 
 Searches in the already read children elements for all
-elements with the EBML name C<$name>. Returns the found
-element if only one was found, or an arrayref containing
-all found elements. If no elements are found, an empty
-arrayref is returned.
+elements with the EBML name C<$name>. Returns an array
+containing all found elements. On scalar context,
+returns only the first element found.
+
+Croaks if the element's C<type> isn't C<sub>.
 
 =head2 populate_children($recurse,$read_bin)
 
 Populates the internal array of children elements, that is,
 requests that the associated L<Matroska::Parser::Reader> reads
-all children elements.
+all children elements. Returns itself.
+
+Returns false if the element's C<type> isn't C<sub>.
 
 If C<$recurse> is provided and is true, the method will call
 itself in the children elements with the same parameters it
