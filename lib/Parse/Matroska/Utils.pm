@@ -4,7 +4,7 @@ use warnings;
 # ABSTRACT: internally-used helper functions
 package Parse::Matroska::Utils;
 {
-  $Parse::Matroska::Utils::VERSION = '0.002';
+  $Parse::Matroska::Utils::VERSION = '0.003';
 }
 
 use Exporter;
@@ -19,9 +19,9 @@ sub uniq(@) {
 sub uncamelize($) {
     local $_ = shift;
     # lc followed by UC: lc_UC
-    s/(?<=[a-z])([A-Z])/_$1/g;
+    s/(?<=[a-z])([A-Z])/_\L$1/g;
     # UC followed by two lc: _UClclc
-    s/([A-Z])(?=[a-z]{2})/_$1/g;
+    s/([A-Z])(?=[a-z]{2})/_\L$1/g;
     # strip leading _ that the second regexp might add; lowercase all
     s/^_//; lc
 }
@@ -36,7 +36,7 @@ Parse::Matroska::Utils - internally-used helper functions
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 METHODS
 

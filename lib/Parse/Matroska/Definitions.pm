@@ -5,7 +5,7 @@ use warnings;
 # ABSTRACT: internal EBML grammar definitions
 package Parse::Matroska::Definitions;
 {
-  $Parse::Matroska::Definitions::VERSION = '0.002';
+  $Parse::Matroska::Definitions::VERSION = '0.003';
 }
 
 use Parse::Matroska::Utils qw{uniq uncamelize};
@@ -251,7 +251,7 @@ Parse::Matroska::Definitions - internal EBML grammar definitions
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 SYNOPSIS
 

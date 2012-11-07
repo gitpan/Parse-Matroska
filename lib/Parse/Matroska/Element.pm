@@ -5,7 +5,7 @@ use warnings;
 # ABSTRACT: a mid-level representation of an EBML element
 package Parse::Matroska::Element;
 {
-  $Parse::Matroska::Element::VERSION = '0.002';
+  $Parse::Matroska::Element::VERSION = '0.003';
 }
 
 use Carp;
@@ -163,7 +163,7 @@ Parse::Matroska::Element - a mid-level representation of an EBML element
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 SYNOPSIS
 

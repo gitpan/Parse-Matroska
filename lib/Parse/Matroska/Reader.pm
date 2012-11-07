@@ -5,7 +5,7 @@ use warnings;
 # ABSTRACT: a low-level reader for EBML files
 package Parse::Matroska::Reader;
 {
-  $Parse::Matroska::Reader::VERSION = '0.002';
+  $Parse::Matroska::Reader::VERSION = '0.003';
 }
 
 use Parse::Matroska::Definitions qw{elem_by_hexid};
@@ -17,6 +17,10 @@ use IO::Handle;
 use IO::File;
 use List::Util qw{first};
 use Encode;
+
+use constant BIGINT_TRY => 'Pari,GMP,FastCalc';
+use Math::BigInt try => BIGINT_TRY;
+use Math::BigRat try => BIGINT_TRY;
 
 sub new {
     my $class = shift;
@@ -61,11 +65,10 @@ sub readlen {
 # and then reading the hex-string into an integer
 sub _bin2int($) {
     my ($bin) = @_;
-    # if the length is larger than 4
+    # if the length is larger than 3
     # the resulting integer might be larger than INT_MAX
-    if (length($bin) > 4) {
-        use bigint try => 'GMP';
-        return hex(unpack("H*", $bin));
+    if (length($bin) > 3) {
+        return Math::BigInt->from_hex(unpack("H*", $bin));
     }
     return hex(unpack("H*", $bin));
 }
@@ -73,7 +76,7 @@ sub _bin2int($) {
 # creates a floating-point number with the given mantissa and exponent
 sub _ldexp {
     my ($mantissa, $exponent) = @_;
-    return $mantissa * 2**$exponent;
+    return $mantissa * Math::BigRat->new(2)**$exponent;
 }
 
 # NOTE: the read_* functions are hard to read because they're ports
@@ -147,12 +150,13 @@ sub read_float {
     my $i = $self->read_uint($length);
     my $f;
 
+    use bigrat try => BIGINT_TRY;
+
     # These evil expressions reinterpret an unsigned int as IEEE binary floats
     if ($length == 4) {
         $f = _ldexp(($i & (1<<23 - 1)) + (1<<23), ($i>>23 & (1<<8 - 1)) - 150);
         $f = -$f if $i & (1<<31);
     } elsif ($length == 8) {
-        use bigrat try => 'GMP';
         $f = _ldexp(($i & (1<<52 - 1)) + (1<<52), ($i>>52 & (1<<12 - 1)) - 1075);
         $f = -$f if $i & (1<<63);
     } else {
@@ -256,7 +260,7 @@ Parse::Matroska::Reader - a low-level reader for EBML files
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 SYNOPSIS
 
